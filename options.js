@@ -56,10 +56,8 @@ resetAuthBtn.addEventListener('click', () => {
     }
     chrome.identity.removeCachedAuthToken({ token }, async () => {
       try {
-        await fetch(`https://oauth2.googleapis.com/revoke?token=${token}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
+        const resp = await fetch('https://oauth2.googleapis.com/revoke', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `token=${encodeURIComponent(token)}` });
+        if (!resp.ok) throw new Error(String(resp.status));
         statusEl.textContent = t('options_resetSuccess');
         statusEl.classList.remove('error');
         statusEl.classList.add('success');
