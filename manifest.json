@@ -8,7 +8,7 @@
   },
   "options_page": "options.html",
   "permissions": ["identity", "storage"],
-  "host_permissions": ["https://www.googleapis.com/*"],
+  "host_permissions": ["https://www.googleapis.com/*", "https://oauth2.googleapis.com/*"],
   "oauth2": {
     "client_id": "690273399157-g5rd95r5e9vvbrc1285dapkjmkh8m2c6.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/calendar.events"]

@@ -26,10 +26,20 @@ resetAuthBtn.addEventListener('click', () => {
       statusEl.classList.add('success');
       return;
     }
-    chrome.identity.removeCachedAuthToken({ token }, () => {
-      statusEl.textContent = '接続をリセットしました。次回追加時に再認証されます。';
-      statusEl.classList.remove('error');
-      statusEl.classList.add('success');
+    chrome.identity.removeCachedAuthToken({ token }, async () => {
+      try {
+        await fetch(`https://oauth2.googleapis.com/revoke?token=${token}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        statusEl.textContent = '接続をリセットしました。次回追加時に再認証されます。';
+        statusEl.classList.remove('error');
+        statusEl.classList.add('success');
+      } catch (err) {
+        statusEl.textContent = `エラー: ${err.message}`;
+        statusEl.classList.remove('success');
+        statusEl.classList.add('error');
+      }
     });
   });
 });
