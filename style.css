@@ -153,6 +153,28 @@ button.primary:hover:not(:disabled) {
   background: var(--accent-hover);
 }
 
+button.secondary {
+  margin-top: 4px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+button.secondary:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
 #status {
   min-height: 22px;
   font-size: 16px;

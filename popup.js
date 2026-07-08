@@ -1,5 +1,6 @@
 const form = document.getElementById('eventForm');
 const submitBtn = document.getElementById('submitBtn');
+const undoBtn = document.getElementById('undoBtn');
 const statusEl = document.getElementById('status');
 const settingsBtn = document.getElementById('settingsBtn');
 
@@ -19,8 +20,19 @@ const endTimeSepInput = document.getElementById('endTimeSep');
 
 const singleInput = document.getElementById('singleInput');
 
-let settings = { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native' };
+let settings = { defaultDurationMinutes: 60, inputMode: 'native', closeDelaySeconds: 5 };
 let cachedToken = null;
+let lastInsertedEventId = null;
+let closeTimer = null;
+
+function clearUndoState() {
+  if (closeTimer) {
+    clearTimeout(closeTimer);
+    closeTimer = null;
+  }
+  lastInsertedEventId = null;
+  undoBtn.classList.add('hidden');
+}
 
 function todayLocalDateString() {
   const now = new Date();
@@ -87,6 +99,9 @@ function applyInputMode(mode) {
   nativeFields.classList.toggle('hidden', mode !== 'native');
   separateTextFields.classList.toggle('hidden', mode !== 'separateText');
   singleTextFields.classList.toggle('hidden', mode !== 'singleText');
+
+  dateInput.required = mode === 'native';
+  singleInput.required = mode === 'singleText';
 }
 
 function extractEventParts() {
@@ -131,8 +146,16 @@ async function insertEvent(token, body) {
   });
 }
 
+async function deleteEvent(token, eventId) {
+  return fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` }
+  });
+}
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  clearUndoState();
   submitBtn.disabled = true;
   setStatus(t('popup_addingStatus'), null);
 
@@ -158,14 +181,62 @@ form.addEventListener('submit', async (e) => {
       throw new Error(t('popup_registrationFailedError', String(resp.status)));
     }
 
+    const created = await resp.json();
+    lastInsertedEventId = created.id;
+    undoBtn.classList.remove('hidden');
+
     setStatus(t('popup_addedStatus'), 'success');
-    if (settings.autoCloseOnSuccess) {
-      setTimeout(() => window.close(), 1200);
+    if (settings.closeDelaySeconds > 0) {
+      closeTimer = setTimeout(() => window.close(), settings.closeDelaySeconds * 1000);
     }
   } catch (err) {
     setStatus(t('common_errorPrefix', err.message), 'error');
   } finally {
     submitBtn.disabled = false;
+  }
+});
+
+undoBtn.addEventListener('click', async () => {
+  const targetId = lastInsertedEventId;
+  if (!targetId) return;
+
+  if (closeTimer) {
+    clearTimeout(closeTimer);
+    closeTimer = null;
+  }
+
+  undoBtn.disabled = true;
+  setStatus(t('popup_undoingStatus'), null);
+
+  try {
+    let token = cachedToken || await getToken(true);
+    let resp = await deleteEvent(token, targetId);
+
+    if (resp.status === 401) {
+      chrome.identity.removeCachedAuthToken({ token }, () => {});
+      token = await getToken(true);
+      resp = await deleteEvent(token, targetId);
+    }
+
+    cachedToken = token;
+
+    if (!resp.ok && resp.status !== 404 && resp.status !== 410) {
+      throw new Error(t('popup_undoFailedError', String(resp.status)));
+    }
+
+    if (lastInsertedEventId === targetId) {
+      lastInsertedEventId = null;
+      undoBtn.classList.add('hidden');
+      setStatus(t('popup_undoSuccessStatus'), 'success');
+    }
+  } catch (err) {
+    if (lastInsertedEventId === targetId) {
+      setStatus(t('common_errorPrefix', err.message), 'error');
+    }
+  } finally {
+    if (lastInsertedEventId === targetId) {
+      undoBtn.disabled = false;
+    }
   }
 });
 
@@ -180,7 +251,7 @@ initI18n();
 dateInput.value = todayLocalDateString();
 
 chrome.storage.sync.get(
-  { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native' },
+  { defaultDurationMinutes: 60, inputMode: 'native', closeDelaySeconds: 5 },
   (stored) => {
     settings = stored;
     applyInputMode(settings.inputMode);
