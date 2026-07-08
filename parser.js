@@ -56,7 +56,8 @@ function parseTimeToken(token) {
 }
 
 function parseSeparateTextFields(dateStr, startStr, endStr) {
-  const date = parseDateToken(dateStr.trim());
+  const trimmedDate = dateStr.trim();
+  const date = trimmedDate ? parseDateToken(trimmedDate) : todayLocalDateString();
   if (date === null) return null;
 
   let startTime = '';
