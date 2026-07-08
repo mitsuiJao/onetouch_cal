@@ -1,13 +1,22 @@
 const durationSelect = document.getElementById('duration');
+const durationSetting = document.getElementById('durationSetting');
 const autoCloseCheckbox = document.getElementById('autoClose');
+const inputModeRadios = document.querySelectorAll('input[name="inputMode"]');
 const resetAuthBtn = document.getElementById('resetAuthBtn');
 const statusEl = document.getElementById('status');
 
+function updateDurationVisibility(mode) {
+  durationSetting.classList.toggle('hidden', mode === 'singleText');
+}
+
 chrome.storage.sync.get(
-  { defaultDurationMinutes: 60, autoCloseOnSuccess: true },
+  { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native' },
   (stored) => {
     durationSelect.value = String(stored.defaultDurationMinutes);
     autoCloseCheckbox.checked = stored.autoCloseOnSuccess;
+    const checkedRadio = document.querySelector(`input[name="inputMode"][value="${stored.inputMode}"]`);
+    if (checkedRadio) checkedRadio.checked = true;
+    updateDurationVisibility(stored.inputMode);
   }
 );
 
@@ -17,6 +26,15 @@ durationSelect.addEventListener('change', () => {
 
 autoCloseCheckbox.addEventListener('change', () => {
   chrome.storage.sync.set({ autoCloseOnSuccess: autoCloseCheckbox.checked });
+});
+
+inputModeRadios.forEach((radio) => {
+  radio.addEventListener('change', () => {
+    if (radio.checked) {
+      chrome.storage.sync.set({ inputMode: radio.value });
+      updateDurationVisibility(radio.value);
+    }
+  });
 });
 
 resetAuthBtn.addEventListener('click', () => {

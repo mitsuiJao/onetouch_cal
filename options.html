@@ -43,6 +43,22 @@
     display: inline;
     margin-bottom: 0;
   }
+  .radio-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .radio-row:last-child {
+    margin-bottom: 0;
+  }
+  .radio-row label {
+    display: inline;
+    margin-bottom: 0;
+  }
+  .radio-row input {
+    width: auto;
+  }
   #status {
     margin-top: 4px;
   }
@@ -56,6 +72,22 @@
     <h1>設定</h1>
 
     <div class="setting">
+      <label>入力方法</label>
+      <div class="radio-row">
+        <input type="radio" name="inputMode" id="inputModeNative" value="native">
+        <label for="inputModeNative">標準(日付・時刻ピッカー)</label>
+      </div>
+      <div class="radio-row">
+        <input type="radio" name="inputMode" id="inputModeSeparateText" value="separateText">
+        <label for="inputModeSeparateText">テキスト入力(項目別)</label>
+      </div>
+      <div class="radio-row">
+        <input type="radio" name="inputMode" id="inputModeSingleText" value="singleText">
+        <label for="inputModeSingleText">テキスト入力(一括)</label>
+      </div>
+    </div>
+
+    <div class="setting" id="durationSetting">
       <label for="duration">開始時刻のみ入力した場合の予定の長さ</label>
       <select id="duration">
         <option value="15">15分</option>

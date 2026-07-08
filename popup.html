@@ -15,24 +15,55 @@
   </div>
 
   <form id="eventForm">
-    <label>
-      件名
-      <input type="text" id="subject" required>
-    </label>
-    <label>
-      日付
-      <input type="date" id="date" required>
-    </label>
-    <div class="row">
+    <div id="nativeFields" class="field-group">
       <label>
-        開始時刻
-        <input type="time" id="startTime">
+        件名
+        <input type="text" id="subject" required>
       </label>
       <label>
-        終了時刻
-        <input type="time" id="endTime">
+        日付
+        <input type="date" id="date" required>
+      </label>
+      <div class="row">
+        <label>
+          開始時刻
+          <input type="time" id="startTime">
+        </label>
+        <label>
+          終了時刻
+          <input type="time" id="endTime">
+        </label>
+      </div>
+    </div>
+
+    <div id="separateTextFields" class="field-group hidden">
+      <label>
+        件名
+        <input type="text" id="subjectSep" required>
+      </label>
+      <label>
+        日付
+        <input type="text" id="dateSep" placeholder="2026/7/8, 7/8, 2026-7-8" required>
+      </label>
+      <div class="row">
+        <label>
+          開始時刻
+          <input type="text" id="startTimeSep" placeholder="9:00, 900">
+        </label>
+        <label>
+          終了時刻
+          <input type="text" id="endTimeSep" placeholder="10:00, 1000">
+        </label>
+      </div>
+    </div>
+
+    <div id="singleTextFields" class="field-group hidden">
+      <label>
+        件名 日付 時刻
+        <input type="text" id="singleInput" placeholder="買い物 7/9 2000 2100" required>
       </label>
     </div>
+
     <button type="submit" class="primary" id="submitBtn">追加</button>
     <div id="status" role="status" aria-live="polite"></div>
   </form>
@@ -40,6 +71,7 @@
   <a class="calendar-link" href="https://calendar.google.com/" target="_blank" rel="noopener">Google カレンダーを開く</a>
 
   <script src="common.js"></script>
+  <script src="parser.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
