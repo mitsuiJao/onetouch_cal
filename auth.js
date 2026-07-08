@@ -1,6 +1,8 @@
 const authBtn = document.getElementById('authBtn');
 const authStatusEl = document.getElementById('authStatus');
 
+initTheme();
+
 authBtn.addEventListener('click', async () => {
   authBtn.disabled = true;
   authStatusEl.textContent = '認証中…';

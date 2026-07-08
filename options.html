@@ -2,74 +2,21 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<script>
+  (function () {
+    var t = localStorage.getItem('otc-theme');
+    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <title>One-Touch Calendar - 設定</title>
 <link rel="stylesheet" href="style.css">
-<style>
-  html, body {
-    height: 100%;
-  }
-  body {
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    background: #f2f0f4;
-    padding: 48px 16px;
-  }
-  .card {
-    width: 100%;
-    max-width: 520px;
-    height: fit-content;
-    background: var(--surface);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    padding: 32px 40px 40px;
-  }
-  .card h1 {
-    margin-top: 0;
-    font-size: 22px;
-  }
-  .setting {
-    margin-bottom: 20px;
-  }
-  .setting + .setting {
-    border-top: 1px solid #e7e0ec;
-    padding-top: 20px;
-  }
-  .setting label {
-    display: block;
-    margin-bottom: 8px;
-  }
-  .checkbox-row label {
-    display: inline;
-    margin-bottom: 0;
-  }
-  .radio-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-  .radio-row:last-child {
-    margin-bottom: 0;
-  }
-  .radio-row label {
-    display: inline;
-    margin-bottom: 0;
-  }
-  .radio-row input {
-    width: auto;
-  }
-  #status {
-    margin-top: 4px;
-  }
-  #duration {
-    min-width: 160px;
-  }
-</style>
 </head>
-<body>
+<body class="options-body">
   <div class="card">
-    <h1>設定</h1>
+    <div class="card-header">
+      <h1>設定</h1>
+      <button type="button" id="themeToggleBtn" class="icon-button" title="ダークモードに切り替え" aria-label="ダークモードに切り替え">☾</button>
+    </div>
 
     <div class="setting">
       <label>入力方法</label>
@@ -112,6 +59,7 @@
     <div id="status" role="status" aria-live="polite"></div>
   </div>
 
+  <script src="common.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

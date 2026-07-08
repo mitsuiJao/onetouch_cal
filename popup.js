@@ -173,6 +173,9 @@ settingsBtn.addEventListener('click', () => {
   chrome.runtime.openOptionsPage();
 });
 
+initTheme();
+wireThemeToggle('themeToggleBtn');
+
 dateInput.value = todayLocalDateString();
 
 chrome.storage.sync.get(

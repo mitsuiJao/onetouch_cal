@@ -5,6 +5,9 @@ const inputModeRadios = document.querySelectorAll('input[name="inputMode"]');
 const resetAuthBtn = document.getElementById('resetAuthBtn');
 const statusEl = document.getElementById('status');
 
+initTheme();
+wireThemeToggle('themeToggleBtn');
+
 function updateDurationVisibility(mode) {
   durationSetting.classList.toggle('hidden', mode === 'singleText');
 }
