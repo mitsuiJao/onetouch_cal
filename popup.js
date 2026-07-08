@@ -97,7 +97,7 @@ function extractEventParts() {
       endTimeSepInput.value
     );
     if (!parsed) {
-      setStatus('エラー: 日付または時刻の形式が正しくありません', 'error');
+      setStatus(t('common_errorPrefix', t('popup_invalidDateTimeError')), 'error');
       return null;
     }
     return { summary: subjectSepInput.value.trim(), ...parsed };
@@ -106,7 +106,7 @@ function extractEventParts() {
   if (settings.inputMode === 'singleText') {
     const result = parseSingleTextInput(singleInput.value);
     if (!result.ok) {
-      setStatus(`エラー: ${result.message}`, 'error');
+      setStatus(t('common_errorPrefix', result.message), 'error');
       return null;
     }
     return result;
@@ -134,7 +134,7 @@ async function insertEvent(token, body) {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   submitBtn.disabled = true;
-  setStatus('追加中…', null);
+  setStatus(t('popup_addingStatus'), null);
 
   try {
     const parts = extractEventParts();
@@ -155,15 +155,15 @@ form.addEventListener('submit', async (e) => {
     cachedToken = token;
 
     if (!resp.ok) {
-      throw new Error(`登録に失敗しました (${resp.status})`);
+      throw new Error(t('popup_registrationFailedError', String(resp.status)));
     }
 
-    setStatus('追加しました', 'success');
+    setStatus(t('popup_addedStatus'), 'success');
     if (settings.autoCloseOnSuccess) {
       setTimeout(() => window.close(), 1200);
     }
   } catch (err) {
-    setStatus(`エラー: ${err.message}`, 'error');
+    setStatus(t('common_errorPrefix', err.message), 'error');
   } finally {
     submitBtn.disabled = false;
   }
@@ -175,6 +175,7 @@ settingsBtn.addEventListener('click', () => {
 
 initTheme();
 wireThemeToggle('themeToggleBtn');
+initI18n();
 
 dateInput.value = todayLocalDateString();
 

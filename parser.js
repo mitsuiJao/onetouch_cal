@@ -97,7 +97,7 @@ function parseSingleTextInput(input) {
 
     const value = type === 'D' ? parseDateToken(tokens[i]) : parseTimeToken(tokens[i]);
     if (value === null) {
-      return { ok: false, message: `「${tokens[i]}」の形式が正しくありません` };
+      return { ok: false, message: t('parser_invalidTokenFormat', tokens[i]) };
     }
 
     trailing.unshift({ type, value });
@@ -106,10 +106,10 @@ function parseSingleTextInput(input) {
 
   const summary = tokens.slice(0, i + 1).join(' ').trim();
   if (!summary) {
-    return { ok: false, message: '件名を入力してください' };
+    return { ok: false, message: t('parser_subjectRequired') };
   }
 
-  const shape = trailing.map((t) => t.type).join(',');
+  const shape = trailing.map((entry) => entry.type).join(',');
   const today = todayLocalDateString();
 
   switch (shape) {
@@ -133,6 +133,6 @@ function parseSingleTextInput(input) {
         endTime: trailing[3].value
       };
     default:
-      return { ok: false, message: '日付・時刻の形式を認識できませんでした' };
+      return { ok: false, message: t('parser_unrecognizedDateTime') };
   }
 }

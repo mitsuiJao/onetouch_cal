@@ -6,12 +6,65 @@ function getToken(interactive) {
   return new Promise((resolve, reject) => {
     chrome.identity.getAuthToken({ interactive }, (token) => {
       if (chrome.runtime.lastError || !token) {
-        reject(chrome.runtime.lastError || new Error('トークンを取得できませんでした'));
+        reject(chrome.runtime.lastError || new Error(t('common_tokenUnavailable')));
         return;
       }
       resolve(token);
     });
   });
+}
+
+const LANGUAGE_SYNC_KEY = 'language';
+let overrideMessages = null;
+
+function substituteMessage(entry, subs) {
+  if (!entry) return '';
+  let msg = entry.message;
+  if (entry.placeholders) {
+    for (const [name, def] of Object.entries(entry.placeholders)) {
+      msg = msg.split(`$${name.toUpperCase()}$`).join(def.content);
+    }
+  }
+  const list = Array.isArray(subs) ? subs : (subs !== undefined ? [subs] : []);
+  list.forEach((sub, i) => { msg = msg.split(`$${i + 1}`).join(sub); });
+  return msg;
+}
+
+function t(key, subs) {
+  if (overrideMessages) return substituteMessage(overrideMessages[key], subs);
+  return chrome.i18n.getMessage(key, subs);
+}
+
+async function loadOverrideMessages(locale) {
+  const res = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
+  return res.json();
+}
+
+function applyI18n(root = document) {
+  root.querySelectorAll('[data-i18n]').forEach((el) => {
+    const msg = t(el.getAttribute('data-i18n'));
+    if (msg) el.textContent = msg;
+  });
+  root.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    const msg = t(el.getAttribute('data-i18n-placeholder'));
+    if (msg) el.setAttribute('placeholder', msg);
+  });
+  root.querySelectorAll('[data-i18n-title]').forEach((el) => {
+    const msg = t(el.getAttribute('data-i18n-title'));
+    if (msg) el.setAttribute('title', msg);
+  });
+  root.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
+    const msg = t(el.getAttribute('data-i18n-aria-label'));
+    if (msg) el.setAttribute('aria-label', msg);
+  });
+}
+
+async function initI18n() {
+  const stored = await new Promise((resolve) => chrome.storage.sync.get({ [LANGUAGE_SYNC_KEY]: 'auto' }, resolve));
+  overrideMessages = stored[LANGUAGE_SYNC_KEY] === 'auto' ? null : await loadOverrideMessages(stored[LANGUAGE_SYNC_KEY]);
+  applyI18n();
+  const themeBtn = document.getElementById('themeToggleBtn');
+  if (themeBtn) updateThemeToggleButton(themeBtn, document.documentElement.getAttribute('data-theme') || 'light');
 }
 
 const THEME_STORAGE_KEY = 'otc-theme';
@@ -26,7 +79,7 @@ function updateThemeToggleButton(btn, theme) {
   if (!btn) return;
   const isDark = theme === 'dark';
   btn.textContent = isDark ? '☀' : '☾';
-  btn.title = isDark ? 'ライトモードに切り替え' : 'ダークモードに切り替え';
+  btn.title = t(isDark ? 'common_themeToggleToLight' : 'common_themeToggleToDark');
   btn.setAttribute('aria-label', btn.title);
 }
 
@@ -70,6 +123,9 @@ if (chrome.storage && chrome.storage.onChanged) {
       const theme = changes[THEME_SYNC_KEY].newValue;
       applyTheme(theme);
       updateThemeToggleButton(document.getElementById('themeToggleBtn'), theme);
+    }
+    if (area === 'sync' && changes[LANGUAGE_SYNC_KEY]) {
+      initI18n();
     }
   });
 }

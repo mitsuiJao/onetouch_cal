@@ -8,52 +8,65 @@
     if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
-<title>One-Touch Calendar - 設定</title>
+<title data-i18n="options_pageTitle">One-Touch Calendar - 設定</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="options-body">
   <div class="card">
     <div class="card-header">
-      <h1>設定</h1>
+      <h1 data-i18n="options_heading">設定</h1>
       <button type="button" id="themeToggleBtn" class="icon-button" title="ダークモードに切り替え" aria-label="ダークモードに切り替え">☾</button>
     </div>
 
     <div class="setting">
-      <label>入力方法</label>
+      <label for="languageSelect" data-i18n="options_languageLabel">言語</label>
+      <select id="languageSelect">
+        <option value="auto" data-i18n="options_languageAuto">自動(ブラウザの設定に従う)</option>
+        <option value="ja">日本語</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
+    <div class="setting">
+      <label data-i18n="options_inputModeLabel">入力方法</label>
       <div class="radio-row">
         <input type="radio" name="inputMode" id="inputModeNative" value="native">
-        <label for="inputModeNative">標準(日付・時刻ピッカー)</label>
+        <label for="inputModeNative" data-i18n="options_inputModeNative">標準(日付・時刻ピッカー)</label>
       </div>
       <div class="radio-row">
         <input type="radio" name="inputMode" id="inputModeSeparateText" value="separateText">
-        <label for="inputModeSeparateText">テキスト入力(項目別)</label>
+        <label for="inputModeSeparateText" data-i18n="options_inputModeSeparateText">テキスト入力(項目別)</label>
       </div>
       <div class="radio-row">
         <input type="radio" name="inputMode" id="inputModeSingleText" value="singleText">
-        <label for="inputModeSingleText">テキスト入力(一括)</label>
+        <label for="inputModeSingleText" data-i18n="options_inputModeSingleText">テキスト入力(一括)</label>
       </div>
     </div>
 
     <div class="setting" id="durationSetting">
-      <label for="duration">開始時刻のみ入力した場合の予定の長さ</label>
+      <label for="duration" data-i18n="options_durationLabel">開始時刻のみ入力した場合の予定の長さ</label>
       <select id="duration">
-        <option value="15">15分</option>
-        <option value="30">30分</option>
-        <option value="45">45分</option>
-        <option value="60">60分</option>
-        <option value="90">90分</option>
-        <option value="120">120分</option>
+        <option value="15" data-i18n="options_duration15">15分</option>
+        <option value="30" data-i18n="options_duration30">30分</option>
+        <option value="45" data-i18n="options_duration45">45分</option>
+        <option value="60" data-i18n="options_duration60">60分</option>
+        <option value="90" data-i18n="options_duration90">90分</option>
+        <option value="120" data-i18n="options_duration120">120分</option>
       </select>
     </div>
 
     <div class="setting checkbox-row">
       <input type="checkbox" id="autoClose">
-      <label for="autoClose">登録成功後にポップアップを自動で閉じる</label>
+      <label for="autoClose" data-i18n="options_autoCloseLabel">登録成功後にポップアップを自動で閉じる</label>
     </div>
 
     <div class="setting">
-      <button type="button" id="resetAuthBtn" class="primary">Googleアカウント接続をリセット</button>
-      <div class="hint">次回の予定追加時にアカウントの再選択・再同意を求めます。権限を完全に取り消す場合は <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a> から行ってください。</div>
+      <button type="button" id="resetAuthBtn" class="primary" data-i18n="options_resetAuthButton">Googleアカウント接続をリセット</button>
+      <div class="hint">
+        <span data-i18n="options_resetAuthHintBefore">次回の予定追加時にアカウントの再選択・再同意を求めます。権限を完全に取り消す場合は</span>
+        <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener" data-i18n="options_resetAuthHintLinkText">myaccount.google.com/permissions</a>
+        <span data-i18n="options_resetAuthHintAfter">から行ってください。</span>
+      </div>
     </div>
 
     <div id="status" role="status" aria-live="polite"></div>

@@ -2,26 +2,33 @@ const durationSelect = document.getElementById('duration');
 const durationSetting = document.getElementById('durationSetting');
 const autoCloseCheckbox = document.getElementById('autoClose');
 const inputModeRadios = document.querySelectorAll('input[name="inputMode"]');
+const languageSelect = document.getElementById('languageSelect');
 const resetAuthBtn = document.getElementById('resetAuthBtn');
 const statusEl = document.getElementById('status');
 
 initTheme();
 wireThemeToggle('themeToggleBtn');
+initI18n();
 
 function updateDurationVisibility(mode) {
   durationSetting.classList.toggle('hidden', mode === 'singleText');
 }
 
 chrome.storage.sync.get(
-  { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native' },
+  { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native', language: 'auto' },
   (stored) => {
     durationSelect.value = String(stored.defaultDurationMinutes);
     autoCloseCheckbox.checked = stored.autoCloseOnSuccess;
     const checkedRadio = document.querySelector(`input[name="inputMode"][value="${stored.inputMode}"]`);
     if (checkedRadio) checkedRadio.checked = true;
     updateDurationVisibility(stored.inputMode);
+    languageSelect.value = stored.language;
   }
 );
+
+languageSelect.addEventListener('change', () => {
+  chrome.storage.sync.set({ language: languageSelect.value });
+});
 
 durationSelect.addEventListener('change', () => {
   chrome.storage.sync.set({ defaultDurationMinutes: Number(durationSelect.value) });
@@ -43,7 +50,7 @@ inputModeRadios.forEach((radio) => {
 resetAuthBtn.addEventListener('click', () => {
   chrome.identity.getAuthToken({ interactive: false }, (token) => {
     if (chrome.runtime.lastError || !token) {
-      statusEl.textContent = '解除するトークンがありませんでした（未接続の可能性があります）';
+      statusEl.textContent = t('options_noTokenToRevoke');
       statusEl.classList.add('success');
       return;
     }
@@ -53,11 +60,11 @@ resetAuthBtn.addEventListener('click', () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
-        statusEl.textContent = '接続をリセットしました。次回追加時に再認証されます。';
+        statusEl.textContent = t('options_resetSuccess');
         statusEl.classList.remove('error');
         statusEl.classList.add('success');
       } catch (err) {
-        statusEl.textContent = `エラー: ${err.message}`;
+        statusEl.textContent = t('common_errorPrefix', err.message);
         statusEl.classList.remove('success');
         statusEl.classList.add('error');
       }
