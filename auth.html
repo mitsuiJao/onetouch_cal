@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<script>
+  (function () {
+    var t = localStorage.getItem('otc-theme');
+    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+<title>One-Touch Calendar</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { width: 360px; padding: 19px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>One-Touch Calendar</h1>
+    <button type="button" id="settingsBtn" class="icon-button" data-i18n-title="popup_settingsButton" data-i18n-aria-label="popup_settingsButton" title="設定" aria-label="設定">⚙</button>
+  </div>
+
+  <div class="auth-view">
+    <button type="button" id="authBtn" class="primary" data-i18n="auth_signInButton">Googleでログインして接続</button>
+    <div id="authStatus" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="common.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

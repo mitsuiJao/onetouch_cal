@@ -2,43 +2,85 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<script>
+  (function () {
+    var t = localStorage.getItem('otc-theme');
+    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <title>One-Touch Calendar</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  body { width: 300px; padding: 16px; }
+  body { width: 360px; padding: 19px; }
 </style>
 </head>
 <body>
   <div class="header">
-    <h1>予定を追加</h1>
-    <button type="button" id="settingsBtn" class="icon-button" title="設定" aria-label="設定">⚙</button>
+    <h1 data-i18n="popup_title">予定を追加</h1>
+    <div class="header-actions">
+      <button type="button" id="themeToggleBtn" class="icon-button" title="ダークモードに切り替え" aria-label="ダークモードに切り替え">☾</button>
+      <button type="button" id="settingsBtn" class="icon-button" data-i18n-title="popup_settingsButton" data-i18n-aria-label="popup_settingsButton" title="設定" aria-label="設定">⚙</button>
+    </div>
   </div>
 
   <form id="eventForm">
-    <label>
-      件名
-      <input type="text" id="subject" required>
-    </label>
-    <label>
-      日付
-      <input type="date" id="date" required>
-    </label>
-    <div class="row">
+    <div id="nativeFields" class="field-group">
       <label>
-        開始時刻
-        <input type="time" id="startTime">
+        <span data-i18n="popup_subjectLabel">件名</span>
+        <input type="text" id="subject" required>
       </label>
       <label>
-        終了時刻
-        <input type="time" id="endTime">
+        <span data-i18n="popup_dateLabel">日付</span>
+        <input type="date" id="date" required>
+      </label>
+      <div class="row">
+        <label>
+          <span data-i18n="popup_startTimeLabel">開始時刻</span>
+          <input type="time" id="startTime">
+        </label>
+        <label>
+          <span data-i18n="popup_endTimeLabel">終了時刻</span>
+          <input type="time" id="endTime">
+        </label>
+      </div>
+    </div>
+
+    <div id="separateTextFields" class="field-group hidden">
+      <label>
+        <span data-i18n="popup_subjectLabel">件名</span>
+        <input type="text" id="subjectSep" required>
+      </label>
+      <label>
+        <span data-i18n="popup_dateLabel">日付</span>
+        <input type="text" id="dateSep" data-i18n-placeholder="popup_dateSepPlaceholder" placeholder="2026/7/8, 7/8, 2026-7-8(空欄で今日)">
+      </label>
+      <div class="row">
+        <label>
+          <span data-i18n="popup_startTimeLabel">開始時刻</span>
+          <input type="text" id="startTimeSep" data-i18n-placeholder="popup_startTimeSepPlaceholder" placeholder="9:00, 900">
+        </label>
+        <label>
+          <span data-i18n="popup_endTimeLabel">終了時刻</span>
+          <input type="text" id="endTimeSep" data-i18n-placeholder="popup_endTimeSepPlaceholder" placeholder="10:00, 1000">
+        </label>
+      </div>
+    </div>
+
+    <div id="singleTextFields" class="field-group hidden">
+      <label>
+        <span data-i18n="popup_singleTextLabel">件名 日付 時刻</span>
+        <input type="text" id="singleInput" data-i18n-placeholder="popup_singleTextPlaceholder" placeholder="買い物 7/9 2000 2100" required>
       </label>
     </div>
-    <button type="submit" class="primary" id="submitBtn">追加</button>
+
+    <button type="submit" class="primary" id="submitBtn" data-i18n="popup_submitButton">追加</button>
     <div id="status" role="status" aria-live="polite"></div>
   </form>
 
-  <a class="calendar-link" href="https://calendar.google.com/" target="_blank" rel="noopener">Google カレンダーを開く</a>
+  <a class="calendar-link" href="https://calendar.google.com/" target="_blank" rel="noopener" data-i18n="popup_calendarLink">Google カレンダーを開く</a>
 
+  <script src="common.js"></script>
+  <script src="parser.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

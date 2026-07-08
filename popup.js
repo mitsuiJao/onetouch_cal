@@ -1,22 +1,31 @@
 const form = document.getElementById('eventForm');
-const subjectInput = document.getElementById('subject');
-const dateInput = document.getElementById('date');
-const startTimeInput = document.getElementById('startTime');
-const endTimeInput = document.getElementById('endTime');
 const submitBtn = document.getElementById('submitBtn');
 const statusEl = document.getElementById('status');
 const settingsBtn = document.getElementById('settingsBtn');
 
-let settings = { defaultDurationMinutes: 60, autoCloseOnSuccess: true };
+const nativeFields = document.getElementById('nativeFields');
+const separateTextFields = document.getElementById('separateTextFields');
+const singleTextFields = document.getElementById('singleTextFields');
+
+const subjectInput = document.getElementById('subject');
+const dateInput = document.getElementById('date');
+const startTimeInput = document.getElementById('startTime');
+const endTimeInput = document.getElementById('endTime');
+
+const subjectSepInput = document.getElementById('subjectSep');
+const dateSepInput = document.getElementById('dateSep');
+const startTimeSepInput = document.getElementById('startTimeSep');
+const endTimeSepInput = document.getElementById('endTimeSep');
+
+const singleInput = document.getElementById('singleInput');
+
+let settings = { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native' };
+let cachedToken = null;
 
 function todayLocalDateString() {
   const now = new Date();
   const offsetMs = now.getTimezoneOffset() * 60000;
   return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
-}
-
-function pad2(n) {
-  return String(n).padStart(2, '0');
 }
 
 function localDateTimeParts(dateObj) {
@@ -33,14 +42,11 @@ function addDaysToDateString(dateStr, days) {
   return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
 }
 
-function buildEventBody() {
-  const summary = subjectInput.value.trim();
-  const date = dateInput.value;
-  const start = startTimeInput.value;
-  const end = endTimeInput.value;
+function buildEventBodyFromParts({ summary, date, startTime, endTime, endDate }) {
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const resolvedEndDate = endDate || date;
 
-  if (!start && !end) {
+  if (!startTime && !endTime) {
     return {
       summary,
       start: { date },
@@ -49,43 +55,69 @@ function buildEventBody() {
   }
 
   let startDate = date;
-  let startTime = start;
-  let endDate = date;
-  let endTime = end;
+  let sTime = startTime;
+  let eDate = resolvedEndDate;
+  let eTime = endTime;
 
-  if (start && !end) {
-    const startDt = new Date(`${date}T${start}:00`);
+  if (startTime && !endTime) {
+    const startDt = new Date(`${date}T${startTime}:00`);
     const endDt = new Date(startDt.getTime() + settings.defaultDurationMinutes * 60000);
     const parts = localDateTimeParts(endDt);
-    endDate = parts.date;
-    endTime = parts.time;
-  } else if (!start && end) {
-    startTime = end;
+    eDate = parts.date;
+    eTime = parts.time;
+  } else if (!startTime && endTime) {
+    sTime = endTime;
+    startDate = resolvedEndDate;
   }
 
   return {
     summary,
-    start: { dateTime: `${startDate}T${startTime}:00`, timeZone },
-    end: { dateTime: `${endDate}T${endTime}:00`, timeZone }
+    start: { dateTime: `${startDate}T${sTime}:00`, timeZone },
+    end: { dateTime: `${eDate}T${eTime}:00`, timeZone }
   };
-}
-
-function getToken(interactive) {
-  return new Promise((resolve, reject) => {
-    chrome.identity.getAuthToken({ interactive }, (token) => {
-      if (chrome.runtime.lastError || !token) {
-        reject(chrome.runtime.lastError || new Error('トークンを取得できませんでした'));
-        return;
-      }
-      resolve(token);
-    });
-  });
 }
 
 function setStatus(text, kind) {
   statusEl.textContent = text;
   statusEl.classList.remove('error', 'success');
   if (kind) statusEl.classList.add(kind);
+}
+
+function applyInputMode(mode) {
+  nativeFields.classList.toggle('hidden', mode !== 'native');
+  separateTextFields.classList.toggle('hidden', mode !== 'separateText');
+  singleTextFields.classList.toggle('hidden', mode !== 'singleText');
+}
+
+function extractEventParts() {
+  if (settings.inputMode === 'separateText') {
+    const parsed = parseSeparateTextFields(
+      dateSepInput.value,
+      startTimeSepInput.value,
+      endTimeSepInput.value
+    );
+    if (!parsed) {
+      setStatus(t('common_errorPrefix', t('popup_invalidDateTimeError')), 'error');
+      return null;
+    }
+    return { summary: subjectSepInput.value.trim(), ...parsed };
+  }
+
+  if (settings.inputMode === 'singleText') {
+    const result = parseSingleTextInput(singleInput.value);
+    if (!result.ok) {
+      setStatus(t('common_errorPrefix', result.message), 'error');
+      return null;
+    }
+    return result;
+  }
+
+  return {
+    summary: subjectInput.value.trim(),
+    date: dateInput.value,
+    startTime: startTimeInput.value,
+    endTime: endTimeInput.value
+  };
 }
 
 async function insertEvent(token, body) {
@@ -102,11 +134,16 @@ async function insertEvent(token, body) {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   submitBtn.disabled = true;
-  setStatus('追加中…', null);
+  setStatus(t('popup_addingStatus'), null);
 
   try {
-    const body = buildEventBody();
-    let token = await getToken(true);
+    const parts = extractEventParts();
+    if (!parts) {
+      return;
+    }
+
+    const body = buildEventBodyFromParts(parts);
+    let token = cachedToken || await getToken(true);
     let resp = await insertEvent(token, body);
 
     if (resp.status === 401) {
@@ -115,16 +152,18 @@ form.addEventListener('submit', async (e) => {
       resp = await insertEvent(token, body);
     }
 
+    cachedToken = token;
+
     if (!resp.ok) {
-      throw new Error(`登録に失敗しました (${resp.status})`);
+      throw new Error(t('popup_registrationFailedError', String(resp.status)));
     }
 
-    setStatus('追加しました', 'success');
+    setStatus(t('popup_addedStatus'), 'success');
     if (settings.autoCloseOnSuccess) {
       setTimeout(() => window.close(), 1200);
     }
   } catch (err) {
-    setStatus(`エラー: ${err.message}`, 'error');
+    setStatus(t('common_errorPrefix', err.message), 'error');
   } finally {
     submitBtn.disabled = false;
   }
@@ -134,11 +173,24 @@ settingsBtn.addEventListener('click', () => {
   chrome.runtime.openOptionsPage();
 });
 
+initTheme();
+wireThemeToggle('themeToggleBtn');
+initI18n();
+
 dateInput.value = todayLocalDateString();
 
 chrome.storage.sync.get(
-  { defaultDurationMinutes: 60, autoCloseOnSuccess: true },
+  { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native' },
   (stored) => {
     settings = stored;
+    applyInputMode(settings.inputMode);
   }
 );
+
+(async () => {
+  try {
+    cachedToken = await getToken(false);
+  } catch (err) {
+    location.href = 'auth.html';
+  }
+})();
