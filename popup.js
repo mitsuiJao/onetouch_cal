@@ -8,6 +8,7 @@ const statusEl = document.getElementById('status');
 const settingsBtn = document.getElementById('settingsBtn');
 
 let settings = { defaultDurationMinutes: 60, autoCloseOnSuccess: true };
+let cachedToken = null;
 
 function todayLocalDateString() {
   const now = new Date();
@@ -70,18 +71,6 @@ function buildEventBody() {
   };
 }
 
-function getToken(interactive) {
-  return new Promise((resolve, reject) => {
-    chrome.identity.getAuthToken({ interactive }, (token) => {
-      if (chrome.runtime.lastError || !token) {
-        reject(chrome.runtime.lastError || new Error('トークンを取得できませんでした'));
-        return;
-      }
-      resolve(token);
-    });
-  });
-}
-
 function setStatus(text, kind) {
   statusEl.textContent = text;
   statusEl.classList.remove('error', 'success');
@@ -106,7 +95,7 @@ form.addEventListener('submit', async (e) => {
 
   try {
     const body = buildEventBody();
-    let token = await getToken(true);
+    let token = cachedToken || await getToken(true);
     let resp = await insertEvent(token, body);
 
     if (resp.status === 401) {
@@ -114,6 +103,8 @@ form.addEventListener('submit', async (e) => {
       token = await getToken(true);
       resp = await insertEvent(token, body);
     }
+
+    cachedToken = token;
 
     if (!resp.ok) {
       throw new Error(`登録に失敗しました (${resp.status})`);
@@ -142,3 +133,11 @@ chrome.storage.sync.get(
     settings = stored;
   }
 );
+
+(async () => {
+  try {
+    cachedToken = await getToken(false);
+  } catch (err) {
+    location.href = 'auth.html';
+  }
+})();
