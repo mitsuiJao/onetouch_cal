@@ -1,0 +1,143 @@
+:root {
+  --primary: #6750a4;
+  --primary-text: #ffffff;
+  --surface: #fffbfe;
+  --on-surface: #1c1b1f;
+  --outline: #79747e;
+  --error: #b3261e;
+  --success: #146c2e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.header h1 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  color: var(--on-surface);
+}
+
+.icon-button:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-size: 12px;
+  color: var(--outline);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+input, select {
+  font: inherit;
+  padding: 8px;
+  border: 1px solid var(--outline);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--on-surface);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.row label {
+  flex: 1;
+}
+
+button.primary {
+  margin-top: 4px;
+  background: var(--primary);
+  color: var(--primary-text);
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+button.primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+button.primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+#status {
+  min-height: 18px;
+  font-size: 13px;
+}
+
+#status.error {
+  color: var(--error);
+}
+
+#status.success {
+  color: var(--success);
+}
+
+.calendar-link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--primary);
+}
+
+.setting {
+  margin-bottom: 20px;
+}
+
+.setting label {
+  font-size: 14px;
+  color: var(--on-surface);
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--outline);
+  margin-top: 4px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-row input {
+  width: auto;
+}

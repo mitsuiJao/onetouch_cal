@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>One-Touch Calendar</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { width: 300px; padding: 16px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>予定を追加</h1>
+    <button type="button" id="settingsBtn" class="icon-button" title="設定" aria-label="設定">⚙</button>
+  </div>
+
+  <form id="eventForm">
+    <label>
+      件名
+      <input type="text" id="subject" required>
+    </label>
+    <label>
+      日付
+      <input type="date" id="date" required>
+    </label>
+    <div class="row">
+      <label>
+        開始時刻
+        <input type="time" id="startTime">
+      </label>
+      <label>
+        終了時刻
+        <input type="time" id="endTime">
+      </label>
+    </div>
+    <button type="submit" class="primary" id="submitBtn">追加</button>
+    <div id="status" role="status" aria-live="polite"></div>
+  </form>
+
+  <a class="calendar-link" href="https://calendar.google.com/" target="_blank" rel="noopener">Google カレンダーを開く</a>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>One-Touch Calendar - 設定</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body { width: 420px; padding: 24px; }
+</style>
+</head>
+<body>
+  <h1>設定</h1>
+
+  <div class="setting">
+    <label for="duration">開始時刻のみ入力した場合の予定の長さ</label>
+    <select id="duration">
+      <option value="15">15分</option>
+      <option value="30">30分</option>
+      <option value="45">45分</option>
+      <option value="60">60分</option>
+      <option value="90">90分</option>
+      <option value="120">120分</option>
+    </select>
+  </div>
+
+  <div class="setting checkbox-row">
+    <input type="checkbox" id="autoClose">
+    <label for="autoClose">登録成功後にポップアップを自動で閉じる</label>
+  </div>
+
+  <div class="setting">
+    <button type="button" id="resetAuthBtn" class="primary">Googleアカウント接続をリセット</button>
+    <div class="hint">次回の予定追加時にアカウントの再選択・再同意を求めます。権限を完全に取り消す場合は <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a> から行ってください。</div>
+  </div>
+
+  <div id="status" role="status" aria-live="polite"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>

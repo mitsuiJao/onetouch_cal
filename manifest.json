@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "One-Touch Calendar",
+  "version": "1.0.0",
+  "description": "Add an event to your Google Calendar in one click, without leaving the page.",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "permissions": ["identity", "storage"],
+  "host_permissions": ["https://www.googleapis.com/*"],
+  "oauth2": {
+    "client_id": "690273399157-g5rd95r5e9vvbrc1285dapkjmkh8m2c6.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/calendar.events"]
+  }
+}
