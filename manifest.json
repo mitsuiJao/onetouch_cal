@@ -13,5 +13,19 @@
   "oauth2": {
     "client_id": "690273399157-g5rd95r5e9vvbrc1285dapkjmkh8m2c6.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/calendar.events"]
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   }
 }
