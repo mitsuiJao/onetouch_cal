@@ -31,8 +31,8 @@ function clearUndoState() {
     closeTimer = null;
   }
   lastInsertedEventId = null;
+  undoBtn.disabled = false;
   undoBtn.classList.add('hidden');
-}
 
 function todayLocalDateString() {
   const now = new Date();
