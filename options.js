@@ -1,6 +1,6 @@
 const durationSelect = document.getElementById('duration');
 const durationSetting = document.getElementById('durationSetting');
-const autoCloseCheckbox = document.getElementById('autoClose');
+const closeDelaySelect = document.getElementById('closeDelay');
 const inputModeRadios = document.querySelectorAll('input[name="inputMode"]');
 const languageSelect = document.getElementById('languageSelect');
 const resetAuthBtn = document.getElementById('resetAuthBtn');
@@ -15,10 +15,10 @@ function updateDurationVisibility(mode) {
 }
 
 chrome.storage.sync.get(
-  { defaultDurationMinutes: 60, autoCloseOnSuccess: true, inputMode: 'native', language: 'auto' },
+  { defaultDurationMinutes: 60, closeDelaySeconds: 5, inputMode: 'native', language: 'auto' },
   (stored) => {
     durationSelect.value = String(stored.defaultDurationMinutes);
-    autoCloseCheckbox.checked = stored.autoCloseOnSuccess;
+    closeDelaySelect.value = String(stored.closeDelaySeconds);
     const checkedRadio = document.querySelector(`input[name="inputMode"][value="${stored.inputMode}"]`);
     if (checkedRadio) checkedRadio.checked = true;
     updateDurationVisibility(stored.inputMode);
@@ -34,8 +34,8 @@ durationSelect.addEventListener('change', () => {
   chrome.storage.sync.set({ defaultDurationMinutes: Number(durationSelect.value) });
 });
 
-autoCloseCheckbox.addEventListener('change', () => {
-  chrome.storage.sync.set({ autoCloseOnSuccess: autoCloseCheckbox.checked });
+closeDelaySelect.addEventListener('change', () => {
+  chrome.storage.sync.set({ closeDelaySeconds: Number(closeDelaySelect.value) });
 });
 
 inputModeRadios.forEach((radio) => {

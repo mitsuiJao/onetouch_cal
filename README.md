@@ -8,7 +8,7 @@ One-Touch Calendar is a Chrome Extension that lets you create Google Calendar ev
 
 - `manifest.json`: Extension metadata, permissions, and Google OAuth scope configuration.
 - `popup.html` / `popup.js`: Main event creation UI and logic.
-- `options.html` / `options.js`: Settings page for default duration, auto-close behavior, and auth reset.
+- `options.html` / `options.js`: Settings page for default duration, auto-close delay, and auth reset.
 - `style.css`: Shared styling for popup and options pages.
 
 ## Features
@@ -17,7 +17,8 @@ One-Touch Calendar is a Chrome Extension that lets you create Google Calendar ev
 - If only a start time is entered, the end time is calculated from the configured default duration.
 - If no times are entered, an all-day event is created.
 - One-click access to extension settings from the popup.
-- Optional auto-close after successful event creation.
+- Configurable auto-close delay (3/5/8/10 seconds, or never) after successful event creation.
+- Undo button to delete the just-created event within that delay window.
 
 ## Permissions used
 
@@ -49,7 +50,7 @@ One-Touch Calendar は、Google カレンダー本体を開かなくても、ポ
 
 - `manifest.json`: 拡張機能のメタデータ、権限、Google OAuth スコープ設定
 - `popup.html` / `popup.js`: 予定追加用ポップアップ画面とそのロジック
-- `options.html` / `options.js`: 既定の予定時間、自動クローズ、認証リセットなどの設定画面
+- `options.html` / `options.js`: 既定の予定時間、閉じるまでの時間、認証リセットなどの設定画面
 - `style.css`: ポップアップと設定画面で共通利用するスタイル
 
 ## 主な機能
@@ -58,7 +59,8 @@ One-Touch Calendar は、Google カレンダー本体を開かなくても、ポ
 - 開始時刻のみ入力した場合、設定された既定時間から終了時刻を自動計算
 - 時刻を入力しない場合、終日予定として作成
 - ポップアップからワンクリックで設定画面へ移動
-- 予定作成成功後にポップアップを自動で閉じる設定
+- 予定作成成功後にポップアップを閉じるまでの時間を設定可能(3/5/8/10秒、または閉じない)
+- 取り消し(Undo)ボタンで、閉じるまでの間に直近追加した予定を削除できる
 
 ## 利用する権限
 

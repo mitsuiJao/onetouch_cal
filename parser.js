@@ -105,9 +105,6 @@ function parseSingleTextInput(input) {
   }
 
   const summary = tokens.slice(0, i + 1).join(' ').trim();
-  if (!summary) {
-    return { ok: false, message: t('parser_subjectRequired') };
-  }
 
   const shape = trailing.map((entry) => entry.type).join(',');
   const today = todayLocalDateString();

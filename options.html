@@ -55,9 +55,15 @@
       </select>
     </div>
 
-    <div class="setting checkbox-row">
-      <input type="checkbox" id="autoClose">
-      <label for="autoClose" data-i18n="options_autoCloseLabel">登録成功後にポップアップを自動で閉じる</label>
+    <div class="setting">
+      <label for="closeDelay" data-i18n="options_closeDelayLabel">登録成功後に閉じるまでの時間</label>
+      <select id="closeDelay">
+        <option value="3" data-i18n="options_closeDelay3">3秒</option>
+        <option value="5" data-i18n="options_closeDelay5">5秒</option>
+        <option value="8" data-i18n="options_closeDelay8">8秒</option>
+        <option value="10" data-i18n="options_closeDelay10">10秒</option>
+        <option value="0" data-i18n="options_closeDelayNever">閉じない</option>
+      </select>
     </div>
 
     <div class="setting">
