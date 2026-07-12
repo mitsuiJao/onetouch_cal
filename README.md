@@ -1,5 +1,9 @@
 # One-Touch Calendar
 
+![banner](./image/ontouch-calendar.png)
+
+https://chromewebstore.google.com/detail/one-touch-calendar/lmgkjjlpffgiklcbecgfkhboifoeohee
+
 One-Touch Calendar is a Chrome Extension that lets you create Google Calendar events from a small popup UI without opening the full Calendar page first.
 
 > 日本語は英語の後に続きます
